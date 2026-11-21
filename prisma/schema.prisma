@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model User {
+  id Int @id() @default(autoincrement())
+  name String
+  empNo String
+  password String
+  rfId String
+  role String
+  status String @default("use")
+  MapUserSectionGroup MapUserSectionGroup[]
+  LocTransactionMachine LocTransactionMachine[]
+}
+
+model Group {
+  id Int @id() @default(autoincrement())
+  name String
+  status String @default("use")
+  MapUserSectionGroup MapUserSectionGroup[]
+  MapDieMachineGroup MapDieMachineGroup[]
+  TransactionMachine TransactionMachine[]
+  LocTransactionMachine LocTransactionMachine[]
+}
+
+model Section {
+  id Int @id() @default(autoincrement())
+  name String
+  status String @default("use")
+  MapUserSectionGroup MapUserSectionGroup[]
+}
+
+
+model MapUserSectionGroup{
+  id Int @id() @default(autoincrement())
+  groupId Int
+  sectionId Int
+  userId Int
+  status String @default("use")
+  Section Section @relation(fields: [sectionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Group Group @relation(fields: [groupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User User @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+
+model Machine {
+  id Int @id() @default(autoincrement())
+  name String
+  status String @default("use")
+  MapDieMachineGroup MapDieMachineGroup[]
+  TransactionMachine TransactionMachine[]
+  LocTransactionMachine LocTransactionMachine[]
+}
+
+model Die{
+  id Int @id() @default(autoincrement())
+  name String
+  status String @default("use")
+  MapDieMachineGroup MapDieMachineGroup[]
+  TransactionMachine TransactionMachine[]
+  LocTransactionMachine LocTransactionMachine[]
+}
+
+model MapDieMachineGroup {
+  id Int @id() @default(autoincrement())
+  machineId Int
+  dieId Int
+  groupId Int
+  status String @default("use")
+  Machine Machine @relation(fields: [machineId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Die Die @relation(fields: [dieId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Group Group @relation(fields: [groupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+
+
+model TransactionMachine {
+  id Int @id() @default(autoincrement())
+  machineId Int
+  dieId Int
+  groupId Int
+  speedTarget Float
+  speedActual Float
+  qcStatus String
+  standByOneDieId Int
+  sortOneStatus String
+  standByTwoDieId Int
+  sortTwoStatus String
+  bal Float
+  state String
+  timeStmp DateTime @default(now())
+  status String @default("use")
+  Machine Machine @relation(fields: [machineId], references: [id], onDelete: NoAction, onUpdate: NoAction )
+  Die Die @relation(fields: [dieId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Group Group @relation(fields: [groupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  LocTransactionMachine LocTransactionMachine[]
+}
+
+
+model LocTransactionMachine {
+  id Int @id() @default(autoincrement())
+  transactionMachineId Int
+  machineId Int
+  dieId Int
+  groupId Int
+  speedTarget Float
+  speedActual Float
+  qcStatus String
+  standByOneDieId Int
+  sortOneStatus String
+  standByTwoDieId Int
+  sortTwoStatus String
+  bal Float
+  state String
+  userId Int
+  timeStmp DateTime @default(now())
+  User User @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction )
+  Machine Machine @relation(fields: [machineId], references: [id], onDelete: NoAction, onUpdate: NoAction )
+  Die Die @relation(fields: [dieId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Group Group @relation(fields: [groupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  TransactionMachine TransactionMachine @relation(fields: [transactionMachineId],references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+
+
+
