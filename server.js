@@ -8,9 +8,19 @@ const dotenv  = require("dotenv");
 dotenv.config();
 
 
+
 const  userController = require('./controllers/UserController')
 const  sectionController = require('./controllers/SectionController')
 const  groupController = require('./controllers/GroupController')
+const  dieController = require('./controllers/DieController')
+const  machineController = require('./controllers/MachineController')
+
+
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
 
 
 //User
@@ -22,18 +32,26 @@ app.post('/api/user/signInRfId', (req, res) => userController.signInRfId(req,res
 
 //Section
 app.post('/api/section/create', (req, res) => sectionController.create(req,res))
-app.get('/api/group/list', (req, res) => sectionController.list(req,res))
+app.get('/api/section/list', (req, res) => sectionController.list(req,res))
 
 
 //Group
 app.post('/api/group/create', (req, res) => groupController.create(req,res))
-app.get('/api/group/create', (req, res) => groupController.list(req,res))
+app.get('/api/group/list', (req, res) => groupController.list(req,res))
+
+
+//die
+app.post('/api/die/create', (req, res) => dieController.create(req,res))
+app.get('/api/die/list', (req, res) => dieController.list(req,res))
+
+
+//machine
+app.post('/api/machine/create', (req, res) => machineController.create(req,res))
+app.get('/api/machine/list', (req, res) => machineController.list(req,res))
 
 
 
 
-
-
-app.listen(3000, () =>{
+app.listen(3001, () =>{
     console.log("API Server Runing...");
 })
