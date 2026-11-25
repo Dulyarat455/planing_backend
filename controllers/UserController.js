@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const jwt = require("jsonwebtoken");
+const { update } = require("./DieController");
 
 module.exports = {
     create: async (req, res) => {
@@ -378,6 +379,77 @@ module.exports = {
           });
         }
       },
+
+
+      update: async(req, res) =>{
+        try{
+          const { userId, name, empNo, password, rfId, 
+            role, sectionId, groupId} = req.body;
+
+
+            if (
+              !name ||
+              !empNo ||
+              !password ||
+              !rfId ||
+              !role ||
+              sectionId == null ||
+              groupId == null ||
+              userId == null
+            ) {
+              return res.status(400).send({ message: "missing_required_fields" });
+            }
+
+
+            
+          const checkUser = await prisma.user.findFirst({
+            where: {
+              empNo: empNo,
+              status: "use",
+            },
+          });
+    
+          if (checkUser) {
+            return res.status(400).send({ message: "User_name_already" });
+          }
+    
+          const result = await prisma.$transaction(async (tx) => {
+            const user = await tx.user.update({
+              where: {
+                id: parseInt(userId),
+              },
+              data: {
+                
+                
+              },
+            });
+    
+            const mapUserSectionGroup = await tx.mapUserSectionGroup.create({
+              data: {
+                groupId: parseInt(groupId),
+                sectionId: parseInt(sectionId),
+                userId: user.id,
+              },
+            });
+    
+            return {
+              user,
+              mapUserSectionGroup,
+            };
+          });
+    
+          return res.send({
+            message: "create_user_success",
+            data: result,
+          });
+
+
+        }catch(e){
+          return res.status(500).send({
+            error: e.message,
+          });
+        }
+      }
 
 
      

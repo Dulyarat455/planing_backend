@@ -35,7 +35,7 @@ module.exports = {
 
             return res.send({
                 message: 'add_machine_success',
-                data: group,
+                data: machine,
             });
 
         }catch(e){

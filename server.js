@@ -14,10 +14,25 @@ const  sectionController = require('./controllers/SectionController')
 const  groupController = require('./controllers/GroupController')
 const  dieController = require('./controllers/DieController')
 const  machineController = require('./controllers/MachineController')
+const  boardController = require('./controllers/BoardController')
 
 
 
 app.use(cors());
+
+//Board fullscreen images
+app.get('/api/board/fullscreen-images', boardController.listImages);
+app.get('/api/board/fullscreen-image', boardController.getImage);
+app.get('/api/board/fullscreen-image/:id', boardController.getImage);
+app.post(
+    '/api/board/fullscreen-image',
+    boardController.authorizeImageChange,
+    express.raw({ type: boardController.imageTypes, limit: '10mb', inflate: false }),
+    boardController.uploadImage,
+    boardController.handleImageUploadError,
+);
+app.delete('/api/board/fullscreen-image/:id', boardController.authorizeImageChange, boardController.deleteImage);
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
