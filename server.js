@@ -58,6 +58,7 @@ app.get('/api/group/list', (req, res) => groupController.list(req,res))
 //die
 app.post('/api/die/create', (req, res) => dieController.create(req,res))
 app.get('/api/die/list', (req, res) => dieController.list(req,res))
+app.post('/api/die/update', (req, res) => dieController.update(req,res))
 
 
 //machine
